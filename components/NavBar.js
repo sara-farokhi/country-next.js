@@ -17,7 +17,6 @@ const NavBar = ({ setMode, mode }) => {
             <Box sx={{ flexGrow: 1 }}>
                 <AppBar position="static" color='transparent'>
                     <Toolbar>
-
                         <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
                             Where in the word
                         </Typography>

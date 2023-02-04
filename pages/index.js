@@ -2,9 +2,6 @@ import Head from 'next/head'
 import Image from 'next/image'
 import NavBar from '@/components/NavBar'
 import CountriesList from '@/components/CountriesList'
-import { Typography } from '@mui/material'
-
-
 
 export default function Home({ setMode, mode }) {
   return (

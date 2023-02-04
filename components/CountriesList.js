@@ -7,7 +7,7 @@ import { Container, Stack } from '@mui/system';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 import SearchIcon from '@mui/icons-material/Search';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import axios from "axios"
 import { Box, Grid, Card } from '@mui/material'
 import CardContent from '@mui/material/CardContent';
@@ -22,9 +22,16 @@ const CountriesList = () => {
     const [countries, setCountries] = useState([])
     const [loading, setLoading] = useState(false)
 
+    const getCountries = async () => {
+        setLoading(true)
+        const res = await axios.get(`https://restcountries.com/v2/all`)
+        setCountries(res.data)
+        setLoading(false)
+    }
 
     useEffect(() => {
         getCountries()
+
     }, [])
 
 
@@ -46,6 +53,8 @@ const CountriesList = () => {
         getOptionLabel: (option) => option.title,
         isOptionEqualToValue: (option, value) => option.title === value.title
     };
+
+
 
     const handleFilterCountries = async (continent) => {
         setLoading(true)
@@ -69,7 +78,6 @@ const CountriesList = () => {
         setLoading(true)
         let A = [...countries]
         A.sort((a, b) => {
-            console.log(a.name)
             const capitalA = a.name// ignore upper and lowercase
             const capitalB = b.name // ignore upper and lowercase
             if (capitalA < capitalB) {
@@ -83,17 +91,6 @@ const CountriesList = () => {
         });
         setCountries(A)
         setLoading(false)
-    }
-
-
-
-
-    const getCountries = async () => {
-        setLoading(true)
-        const res = await axios.get(`https://restcountries.com/v2/all`)
-        setCountries(res.data)
-        setLoading(false)
-
     }
 
     const sortByPopulation = async () => {
@@ -113,6 +110,59 @@ const CountriesList = () => {
             setLoading(false)
         }
     }
+
+    const countryList = useMemo(() => {
+        return (
+            <Grid container sx={{ my: 6, spacing: 2 }}>
+                {countries && countries.map((country, i) => (<Grid key={i} item sm={6} md={3} sx={{ p: 2, width: 1 }}>
+                    <Card>
+                        <CardActionArea>
+                            <CardMedia
+                                component="img"
+                                height="140"
+                                image={country.flag}
+                                alt="green iguana"
+                            />
+                            <CardContent>
+                                <Typography gutterBottom variant="h6" component="div">
+                                    {country.name}
+                                </Typography>
+
+                                <Stack direction="row" spacing={1}>
+
+                                    <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 'bold' }}> Population : </Typography>
+
+                                    <Typography variant="body2" color="text.secondary" >{country.population}</Typography>
+
+                                </Stack>
+                                <Stack direction="row" spacing={1}>
+
+                                    <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 'bold' }}> Capital : </Typography>
+
+                                    <Typography variant="body2" color="text.secondary" >{country.capital}</Typography>
+
+                                </Stack>
+                                <Stack direction="row" spacing={1}>
+
+                                    <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 'bold' }}> Population : </Typography>
+
+                                    <Typography variant="body2" color="text.secondary" >{country.population}</Typography>
+
+                                </Stack>
+                            </CardContent>
+                        </CardActionArea>
+                    </Card>
+                </Grid>))}
+            </Grid>
+        )
+    }, [countries])
+
+
+
+
+
+
+
 
 
 
@@ -143,7 +193,8 @@ const CountriesList = () => {
                                 inputProps={{
                                     'aria-label': 'weight',
                                 }}
-                                onChange={(e) => setCountryName(e.target.value)}
+                                onChange={(e) => setCountryName(e.target.value)
+                                }
                                 value={countryName}
                             />
                         </FormControl>
@@ -179,44 +230,7 @@ const CountriesList = () => {
                     )}
                 />
             </Stack>
-
-
-            {loading ? <Loading /> : <Grid container sx={{ my: 6, spacing: 2 }}>
-                {countries && countries.map(country => (<Grid item sm={6} md={3} sx={{ p: 2, width: 1 }}>
-                    <Card>
-                        <CardActionArea>
-                            <CardMedia
-                                component="img"
-                                height="140"
-                                image={country.flag}
-                                alt="green iguana"
-                            />
-                            <CardContent>
-                                <Typography gutterBottom variant="h6" component="div">
-                                    {country.name}
-                                </Typography>
-                                <Typography variant="body2" color="text.secondary">
-                                    <Stack direction="row" spacing={1}>
-                                        <Box sx={{ fontWeight: 'bold' }}> Population :</Box>
-                                        <Box>{country.population}</Box>
-                                    </Stack>
-                                    <Stack direction="row" spacing={1}>
-                                        <Box sx={{ fontWeight: 'bold' }}> Capital :</Box>
-                                        <Box>{country.capital}</Box>
-                                    </Stack>
-                                    <Stack direction="row" spacing={1}>
-                                        <Box sx={{ fontWeight: 'bold' }}> Region :</Box>
-                                        <Box>{country.region}</Box>
-                                    </Stack>
-                                </Typography>
-                            </CardContent>
-                        </CardActionArea>
-                    </Card>
-                </Grid>))}
-            </Grid>}
-
-
-
+            {loading ? <Loading /> : countryList}
         </Container>
     </>)
 }
