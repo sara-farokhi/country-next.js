@@ -54,7 +54,7 @@ const CountriesList = () => {
             setCountries(res.data)
         }
         setLoading(false)
-   }
+    }
 
     const searchCountry = async (e) => {
         e.preventDefault()
@@ -69,8 +69,9 @@ const CountriesList = () => {
         setLoading(true)
         let A = [...countries]
         A.sort((a, b) => {
-            const capitalA = a.name; // ignore upper and lowercase
-            const capitalB = b.name; // ignore upper and lowercase
+            console.log(a.name)
+            const capitalA = a.name// ignore upper and lowercase
+            const capitalB = b.name // ignore upper and lowercase
             if (capitalA < capitalB) {
                 return -1;
             }
@@ -80,7 +81,7 @@ const CountriesList = () => {
 
             return 0;
         });
-
+        setCountries(A)
         setLoading(false)
     }
 

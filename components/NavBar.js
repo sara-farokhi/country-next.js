@@ -7,7 +7,10 @@ import IconButton from '@mui/material/IconButton';
 import DarkModeOutlinedIcon from '@mui/icons-material/DarkModeOutlined';
 
 
-const NavBar = () => {
+const NavBar = ({ setMode, mode }) => {
+    const changeMode = () => {
+        setMode(mode === "light" ? "dark" : "light")
+    }
 
     return (
         <>
@@ -23,6 +26,7 @@ const NavBar = () => {
                             color="inherit"
                             aria-label="menu"
                             sx={{ mr: 2 }}
+                            onClick={changeMode}
                         >
                             <DarkModeOutlinedIcon />
                             <Box sx={{ fontSize: "13px", ml: 1 }}

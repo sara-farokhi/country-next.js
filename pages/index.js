@@ -6,9 +6,7 @@ import { Typography } from '@mui/material'
 
 
 
-export default function Home() {
-
-
+export default function Home({ setMode, mode }) {
   return (
     <>
       <Head>
@@ -18,7 +16,7 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <div>
-        <NavBar />
+        <NavBar setMode={setMode} mode={mode} />
         <CountriesList />
       </div>
     </>
