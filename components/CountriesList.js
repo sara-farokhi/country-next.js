@@ -9,20 +9,27 @@ import Autocomplete from '@mui/material/Autocomplete';
 import SearchIcon from '@mui/icons-material/Search';
 import { useState, useEffect } from 'react';
 import axios from "axios"
+import { Box, Grid, Card } from '@mui/material'
+import CardContent from '@mui/material/CardContent';
+import CardMedia from '@mui/material/CardMedia';
+import Typography from '@mui/material/Typography';
+import { CardActionArea, ButtonGroup, Button } from '@mui/material';
+import Loading from './Loading';
+
+
 
 const CountriesList = () => {
-    const [counteries, setCountries] = useState([])
+    const [countries, setCountries] = useState([])
+    const [loading, setLoading] = useState(false)
+
 
     useEffect(() => {
-        const getCountries = async () => {
-            const res = await axios.get(`https://restcountries.com/v2/all`)
-            setCountries(res.data)
-        }
         getCountries()
     }, [])
 
 
     const [value, setValue] = useState("")
+    const [order, setOrder] = useState("acc")
     const [countryName, setCountryName] = useState("")
 
     const regions = [
@@ -38,52 +45,120 @@ const CountriesList = () => {
         options: regions,
         getOptionLabel: (option) => option.title,
         isOptionEqualToValue: (option, value) => option.title === value.title
-
     };
 
     const handleFilterCountries = async (continent) => {
-        const res = await axios.get(`https://restcountries.com/v2/region/${continent.title}`)
-        setCountries(res.data)
-    }
+        setLoading(true)
+        if (continent) {
+            const res = await axios.get(`https://restcountries.com/v2/region/${continent.title}`)
+            setCountries(res.data)
+        }
+        setLoading(false)
+   }
 
     const searchCountry = async (e) => {
         e.preventDefault()
+        setLoading(true)
         const res = await axios.get(`https://restcountries.com/v2/name/${countryName}`)
         setCountries(res.data)
+        setLoading(false)
     }
-    console.log(counteries)
+
+
+    const sortByName = async () => {
+        setLoading(true)
+        let A = [...countries]
+        A.sort((a, b) => {
+            const capitalA = a.name; // ignore upper and lowercase
+            const capitalB = b.name; // ignore upper and lowercase
+            if (capitalA < capitalB) {
+                return -1;
+            }
+            if (capitalA > capitalB) {
+                return 1;
+            }
+
+            return 0;
+        });
+
+        setLoading(false)
+    }
+
+
+
+
+    const getCountries = async () => {
+        setLoading(true)
+        const res = await axios.get(`https://restcountries.com/v2/all`)
+        setCountries(res.data)
+        setLoading(false)
+
+    }
+
+    const sortByPopulation = async () => {
+        let A = [...countries]
+        if (order == "acc") {
+            setLoading(true)
+            A.sort((a, b) => a.population - b.population)
+            setCountries(A)
+            setOrder("dec")
+            setLoading(false)
+        }
+        else {
+            setLoading(true)
+            A.sort((a, b) => b.population - a.population)
+            setCountries(A)
+            setOrder("acc")
+            setLoading(false)
+        }
+    }
+
+
 
     return (<>
         <Container sx={{ my: 4 }}>
-            <Stack
 
+            <Stack
                 direction={{ xs: 'column', sm: 'row' }}
+                spacing={4}
                 justifyContent="space-between"
                 alignItems="center"
             >
-                <form onSubmit={(e) => searchCountry(e)}>
-                    <FormControl sx={{ m: 1, width: '25ch' }} variant="outlined">
-                        <OutlinedInput
-                            id="outlined-adornment-weight"
-                            placeholder='Search for a countery'
+                <Box>
+                    <form onSubmit={(e) => searchCountry(e)}>
+                        <FormControl variant="outlined">
+                            <OutlinedInput
+                                id="outlined-adornment-weight"
+                                placeholder='Search for a countery'
 
-                            endAdornment={<InputAdornment position="end"> <SearchIcon /></InputAdornment>}
-                            sx={{
-                                width: {
+                                endAdornment={<InputAdornment position="end"> <SearchIcon /></InputAdornment>}
+                                sx={{
+                                    width: {
+                                        sm: "400px",
+                                        md: "500px"
+                                    }
+                                }}
+                                aria-describedby="outlined-weight-helper-text"
+                                inputProps={{
+                                    'aria-label': 'weight',
+                                }}
+                                onChange={(e) => setCountryName(e.target.value)}
+                                value={countryName}
+                            />
+                        </FormControl>
+                    </form>
+                </Box>
 
-                                    sm: "400px",
-                                    md: "500px"
-                                }
-                            }}
-                            aria-describedby="outlined-weight-helper-text"
-                            inputProps={{
-                                'aria-label': 'weight',
-                            }}
-                            onChange={(e) => setCountryName(e.target.value)}
-                            value={countryName}
-                        />
-                    </FormControl>
-                </form>
+
+                <Box >
+                    <ButtonGroup variant="text" aria-label="text button group">
+                        <Button onClick={() => getCountries()}>All Countreis</Button>
+                        <Button onClick={() => sortByName()}>Sort by Name</Button>
+                        <Button onClick={() => sortByPopulation()}>Sort by Population</Button>
+                    </ButtonGroup>
+                </Box>
+
+
                 <Autocomplete
                     {...defaultProps}
                     sx={{
@@ -103,8 +178,46 @@ const CountriesList = () => {
                     )}
                 />
             </Stack>
-        </Container>
 
+
+            {loading ? <Loading /> : <Grid container sx={{ my: 6, spacing: 2 }}>
+                {countries && countries.map(country => (<Grid item sm={6} md={3} sx={{ p: 2, width: 1 }}>
+                    <Card>
+                        <CardActionArea>
+                            <CardMedia
+                                component="img"
+                                height="140"
+                                image={country.flag}
+                                alt="green iguana"
+                            />
+                            <CardContent>
+                                <Typography gutterBottom variant="h6" component="div">
+                                    {country.name}
+                                </Typography>
+                                <Typography variant="body2" color="text.secondary">
+                                    <Stack direction="row" spacing={1}>
+                                        <Box sx={{ fontWeight: 'bold' }}> Population :</Box>
+                                        <Box>{country.population}</Box>
+                                    </Stack>
+                                    <Stack direction="row" spacing={1}>
+                                        <Box sx={{ fontWeight: 'bold' }}> Capital :</Box>
+                                        <Box>{country.capital}</Box>
+                                    </Stack>
+                                    <Stack direction="row" spacing={1}>
+                                        <Box sx={{ fontWeight: 'bold' }}> Region :</Box>
+                                        <Box>{country.region}</Box>
+                                    </Stack>
+                                </Typography>
+                            </CardContent>
+                        </CardActionArea>
+                    </Card>
+                </Grid>))}
+            </Grid>}
+
+
+
+        </Container>
     </>)
 }
 export default CountriesList
+

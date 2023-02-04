@@ -25,7 +25,7 @@ const NavBar = () => {
                             sx={{ mr: 2 }}
                         >
                             <DarkModeOutlinedIcon />
-                            <Box sx={{ fontSize: "13px", ml:1}}
+                            <Box sx={{ fontSize: "13px", ml: 1 }}
                             > Dark Mode</Box>
                         </IconButton>
                     </Toolbar>
