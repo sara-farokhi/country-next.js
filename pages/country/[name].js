@@ -5,7 +5,6 @@ import Link from "next/link";
 import axios from "axios";
 
 const Country = ({ country }) => {
-    console.log(country)
     return (<>
         <Container>
             <Link href="/">
@@ -56,11 +55,11 @@ const Country = ({ country }) => {
                                 </Stack>
                                 <Stack direction="row" spacing={1} mb={1}>
                                     <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 'bold' }}>Currencies : </Typography>
-                                    <Typography variant="body2" color="text.secondary" >{country.currencies.map((currency, i) => currency.name)}</Typography>
+                                    <Typography variant="body2" color="text.secondary" >{country.currencies && country.currencies.map((currency, i) => <span key={i}>{currency.name}</span>)}</Typography>
                                 </Stack>
                                 <Stack direction="row" spacing={1} mb={1}>
                                     <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 'bold' }}>Languages : </Typography>
-                                    <Typography variant="body2" color="text.secondary" >{country.languages.map((lang, i) => lang.name)}</Typography>
+                                    <Typography variant="body2" color="text.secondary" >{country.currencies && country.languages.map((lang, i) => <span key={i}>{lang.name}</span>)}</Typography>
                                 </Stack></Box>
 
                         </Stack>
@@ -68,7 +67,7 @@ const Country = ({ country }) => {
                             <Stack direction="row" spacing={1} mb={1}>
                                 <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 'bold' }}>Border Countries : </Typography>
                                 {country.borders ? country.borders
-                                    .map((border, i) => <Link href={`/country/${border.toLowerCase()}`} > <Button variant="outlined" key={i}>{border}</Button></Link>) : " ---"}
+                                    .map((border, i) => <Link key={i} href={`/country/${border.toLowerCase()}`} > <Button variant="outlined" key={i}>{border}</Button></Link>) : " ---"}
                             </Stack>
                         </Box>
                     </Stack>
@@ -84,8 +83,6 @@ export async function getServerSideProps({ query }) {
 
     try {
         const res = await axios.get(`https://restcountries.com/v2/alpha/${query.name}`)
-        console.log(res)
-
         return {
             props: {
                 country: res.data,

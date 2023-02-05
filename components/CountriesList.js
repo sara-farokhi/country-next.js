@@ -67,7 +67,6 @@ const CountriesList = () => {
                 toast.error("No Country Is Found")
 
             }
-            console.log(err)
         } finally {
             setLoading(false)
         }
@@ -110,7 +109,6 @@ const CountriesList = () => {
         }
     }
 
-    console.log(countries)
     const countryList = useMemo(() => {
         return (
             <Grid container sx={{ my: 6, spacing: 2 }}>
