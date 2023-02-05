@@ -15,7 +15,7 @@ const Country = ({ country }) => {
             <Grid container>
                 <Grid item xs={12} sm={6} sx={{ pr: 5 }}>
                     {/* <Image src={country.flag} width={300} height={400} /> */}
-                    <img src={country.flag} style={{ width: "100%" }} />
+                    <img src={country.flag} style={{ width: "100%" }} alt="img" />
                 </Grid>
                 <Grid item xs={12} sm={6} sx={{ pl: 6 }}>
                     <Typography gutterBottom variant="h5" sx={{ my: 4 }} component="div">
