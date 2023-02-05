@@ -1,4 +1,5 @@
 import * as React from 'react';
+import "@/styles/globals.css"
 import PropTypes from 'prop-types';
 import Head from 'next/head';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
@@ -9,6 +10,13 @@ import createEmotionCache from './createEmotionCache';
 import { useState } from 'react';
 import axios from "axios"
 import { Box } from "@mui/material"
+import NavBar from '@/components/NavBar';
+import "react-toastify/dist/ReactToastify.css"
+
+import { ToastContainer } from 'react-toastify';
+
+
+
 
 
 
@@ -37,7 +45,9 @@ export default function MyApp(props) {
         <Box bgcolor={"background.default"} color={"text.primary"}>
           {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
           <CssBaseline />
+          <NavBar setMode={setMode} mode={mode} />
           <Component {...pageProps} setMode={setMode} mode={mode} />
+          <ToastContainer />
         </Box>
       </ThemeProvider>
     </CacheProvider>

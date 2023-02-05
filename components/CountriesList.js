@@ -1,21 +1,16 @@
 import * as React from 'react';
-
-import OutlinedInput from '@mui/material/OutlinedInput';
-import InputAdornment from '@mui/material/InputAdornment';
-import FormControl from '@mui/material/FormControl';
-import { Container, Stack } from '@mui/system';
-import TextField from '@mui/material/TextField';
-import Autocomplete from '@mui/material/Autocomplete';
-import SearchIcon from '@mui/icons-material/Search';
 import { useState, useEffect, useMemo } from 'react';
 import axios from "axios"
-import { Box, Grid, Card } from '@mui/material'
-import CardContent from '@mui/material/CardContent';
-import CardMedia from '@mui/material/CardMedia';
-import Typography from '@mui/material/Typography';
-import { CardActionArea, ButtonGroup, Button } from '@mui/material';
-import Loading from './Loading';
 
+import Loading from './Loading';
+import OutlinedInput from '@mui/material/OutlinedInput';
+import InputAdornment from '@mui/material/InputAdornment';
+import { Container, Stack } from '@mui/system';
+import SearchIcon from '@mui/icons-material/Search';
+import { Box, Grid, FormControl, TextField, Autocomplete, Card, CardContent, CardMedia, CardActionArea, ButtonGroup, Button, Typography } from '@mui/material'
+
+import Link from 'next/link';
+import { toast } from 'react-toastify'
 
 
 const CountriesList = () => {
@@ -28,12 +23,10 @@ const CountriesList = () => {
         setCountries(res.data)
         setLoading(false)
     }
-
     useEffect(() => {
         getCountries()
 
     }, [])
-
 
     const [value, setValue] = useState("")
     const [order, setOrder] = useState("acc")
@@ -47,14 +40,11 @@ const CountriesList = () => {
         { title: 'Oceania' },
     ];
 
-
     const defaultProps = {
         options: regions,
         getOptionLabel: (option) => option.title,
         isOptionEqualToValue: (option, value) => option.title === value.title
     };
-
-
 
     const handleFilterCountries = async (continent) => {
         setLoading(true)
@@ -67,10 +57,20 @@ const CountriesList = () => {
 
     const searchCountry = async (e) => {
         e.preventDefault()
-        setLoading(true)
-        const res = await axios.get(`https://restcountries.com/v2/name/${countryName}`)
-        setCountries(res.data)
-        setLoading(false)
+
+        try {
+            setLoading(true)
+            const res = await axios.get(`https://restcountries.com/v2/name/${countryName}`)
+            setCountries(res.data)
+        } catch (err) {
+            if (err.response.status === 404) {
+                toast.error("No Country Is Found")
+
+            }
+            console.log(err)
+        } finally {
+            setLoading(false)
+        }
     }
 
 
@@ -86,7 +86,6 @@ const CountriesList = () => {
             if (capitalA > capitalB) {
                 return 1;
             }
-
             return 0;
         });
         setCountries(A)
@@ -111,60 +110,54 @@ const CountriesList = () => {
         }
     }
 
+    console.log(countries)
     const countryList = useMemo(() => {
         return (
             <Grid container sx={{ my: 6, spacing: 2 }}>
                 {countries && countries.map((country, i) => (<Grid key={i} item sm={6} md={3} sx={{ p: 2, width: 1 }}>
-                    <Card>
-                        <CardActionArea>
-                            <CardMedia
-                                component="img"
-                                height="140"
-                                image={country.flag}
-                                alt="green iguana"
-                            />
-                            <CardContent>
-                                <Typography gutterBottom variant="h6" component="div">
-                                    {country.name}
-                                </Typography>
+                    <Link href={`country/${country.alpha3Code.toLowerCase()}`}>
+                        <Card >
+                            <CardActionArea>
+                                <CardMedia
+                                    component="img"
+                                    height="140"
+                                    image={country.flag}
+                                    alt="green iguana"
+                                />
+                                <CardContent>
+                                    <Typography gutterBottom variant="h6" component="div">
+                                        {country.name}
+                                    </Typography>
 
-                                <Stack direction="row" spacing={1}>
+                                    <Stack direction="row" spacing={1}>
 
-                                    <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 'bold' }}> Population : </Typography>
+                                        <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 'bold' }}> Population : </Typography>
 
-                                    <Typography variant="body2" color="text.secondary" >{country.population}</Typography>
+                                        <Typography variant="body2" color="text.secondary" >{country.population}</Typography>
 
-                                </Stack>
-                                <Stack direction="row" spacing={1}>
+                                    </Stack>
+                                    <Stack direction="row" spacing={1}>
 
-                                    <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 'bold' }}> Capital : </Typography>
+                                        <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 'bold' }}> Capital : </Typography>
 
-                                    <Typography variant="body2" color="text.secondary" >{country.capital}</Typography>
+                                        <Typography variant="body2" color="text.secondary" >{country.capital}</Typography>
 
-                                </Stack>
-                                <Stack direction="row" spacing={1}>
+                                    </Stack>
+                                    <Stack direction="row" spacing={1}>
 
-                                    <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 'bold' }}> Population : </Typography>
+                                        <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 'bold' }}> Population : </Typography>
 
-                                    <Typography variant="body2" color="text.secondary" >{country.population}</Typography>
+                                        <Typography variant="body2" color="text.secondary" >{country.population}</Typography>
 
-                                </Stack>
-                            </CardContent>
-                        </CardActionArea>
-                    </Card>
+                                    </Stack>
+                                </CardContent>
+                            </CardActionArea>
+                        </Card>
+                    </Link>
                 </Grid>))}
             </Grid>
         )
     }, [countries])
-
-
-
-
-
-
-
-
-
 
     return (<>
         <Container sx={{ my: 4 }}>

@@ -1,9 +1,8 @@
 import Head from 'next/head'
-import Image from 'next/image'
 import NavBar from '@/components/NavBar'
 import CountriesList from '@/components/CountriesList'
 
-export default function Home({ setMode, mode }) {
+export default function Home() {
   return (
     <>
       <Head>
@@ -13,7 +12,6 @@ export default function Home({ setMode, mode }) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <div>
-        <NavBar setMode={setMode} mode={mode} />
         <CountriesList />
       </div>
     </>

@@ -5,13 +5,13 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import DarkModeOutlinedIcon from '@mui/icons-material/DarkModeOutlined';
+import LightModeIcon from '@mui/icons-material/LightMode';
 
 
 const NavBar = ({ setMode, mode }) => {
     const changeMode = () => {
         setMode(mode === "light" ? "dark" : "light")
     }
-
     return (
         <>
             <Box sx={{ flexGrow: 1 }}>
@@ -27,9 +27,21 @@ const NavBar = ({ setMode, mode }) => {
                             sx={{ mr: 2 }}
                             onClick={changeMode}
                         >
-                            <DarkModeOutlinedIcon />
-                            <Box sx={{ fontSize: "13px", ml: 1 }}
-                            > Dark Mode</Box>
+                            {
+                                mode === "dark" ? (
+                                    <>
+                                        <LightModeIcon />
+                                        <Box sx={{ fontSize: "13px", ml: 1 }}
+                                        >Light Mode</Box>
+                                    </>
+                                ) : (
+                                    <>
+                                        <DarkModeOutlinedIcon />
+                                        <Box sx={{ fontSize: "13px", ml: 1 }}
+                                        > Dark Mode</Box>
+                                    </>
+                                )
+                            }
                         </IconButton>
                     </Toolbar>
                 </AppBar>
